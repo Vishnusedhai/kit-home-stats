@@ -57,6 +57,7 @@ export function HomelabProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("dark", settings.theme === "dark");
+    root.classList.toggle("light", settings.theme === "light");
   }, [settings.theme]);
 
   const persist = useCallback((next: Device[]) => {
