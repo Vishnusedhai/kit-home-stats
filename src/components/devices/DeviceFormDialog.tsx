@@ -56,11 +56,8 @@ interface Props {
 
 export function DeviceFormDialog({ open, onOpenChange, device, onSubmit }: Props) {
   const [form, setForm] = useState<DeviceInput>(emptyForm);
-  type FieldErrors = { name?: string; ram?: string; storage?: string };
+  const [errors, setErrors] = useState<FieldErrors>({});
 
-function useErrors() {
-  return useState<FieldErrors>({});
-}
 
   const [serviceName, setServiceName] = useState("");
   const [serviceStatus, setServiceStatus] = useState<ServiceStatus>("Running");
