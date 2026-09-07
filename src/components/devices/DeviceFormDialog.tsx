@@ -47,6 +47,8 @@ const emptyForm: DeviceInput = {
   notes: "",
 };
 
+type FieldErrors = { name?: string; ram?: string; storage?: string };
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -101,7 +103,7 @@ export function DeviceFormDialog({ open, onOpenChange, device, onSubmit }: Props
   };
 
   const validate = () => {
-    const next: Record<string, string> = {};
+    const next: FieldErrors = {};
     if (!form.name.trim()) next.name = "Device name is required.";
     if (form.ram < 0) next.ram = "RAM cannot be negative.";
     if (form.storage < 0) next.storage = "Storage cannot be negative.";
