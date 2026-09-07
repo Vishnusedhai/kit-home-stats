@@ -10,33 +10,51 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevicesRouteImport } from './routes/devices'
+import { Route as DevicesIndexRouteImport } from './routes/devices.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevicesRoute = DevicesRouteImport.update({
+  id: '/devices',
+  path: '/devices',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevicesIndexRoute = DevicesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DevicesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/devices': typeof DevicesRouteWithChildren
+  '/devices/': typeof DevicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/devices': typeof DevicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/devices': typeof DevicesRouteWithChildren
+  '/devices/': typeof DevicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/devices' | '/devices/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/devices'
+  id: '__root__' | '/' | '/devices' | '/devices/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DevicesRoute: typeof DevicesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +66,37 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/devices': {
+      id: '/devices'
+      path: '/devices'
+      fullPath: '/devices'
+      preLoaderRoute: typeof DevicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/devices/': {
+      id: '/devices/'
+      path: '/'
+      fullPath: '/devices/'
+      preLoaderRoute: typeof DevicesIndexRouteImport
+      parentRoute: typeof DevicesRoute
+    }
   }
 }
 
+interface DevicesRouteChildren {
+  DevicesIndexRoute: typeof DevicesIndexRoute
+}
+
+const DevicesRouteChildren: DevicesRouteChildren = {
+  DevicesIndexRoute: DevicesIndexRoute,
+}
+
+const DevicesRouteWithChildren =
+  DevicesRoute._addFileChildren(DevicesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DevicesRoute: DevicesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
